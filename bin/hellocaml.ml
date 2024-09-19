@@ -990,17 +990,17 @@ let rec optimize (e : exp) : exp =
     | Const n -> Const n
     | Add (e1, e2) -> 
       (match (optimize e1, optimize e2) with
-        | Const n1, Const n2 -> Const (Int64.add n1 n2)
         | Const 0L, e -> e
         | e, Const 0L -> e
+        | Const n1, Const n2 -> Const (Int64.add n1 n2)
         | e1', e2' -> Add (e1', e2'))
     | Mult (e1, e2) -> 
       (match (optimize e1, optimize e2) with
-        | Const n1, Const n2 -> Const (Int64.mul n1 n2)
         | Const 0L, _ -> Const 0L
         | _, Const 0L -> Const 0L
         | Const 1L, e -> e
         | e, Const 1L -> e
+        | Const n1, Const n2 -> Const (Int64.mul n1 n2)
         | e1', e2' -> Mult (e1', e2'))
     | Neg e1 -> 
       (match optimize e1 with
