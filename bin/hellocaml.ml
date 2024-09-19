@@ -840,7 +840,12 @@ let e3 : exp = Mult (Var "y", Mult (e2, Neg e2)) (* "y * ((x+1) * -(x+1))" *)
   Hint: you probably want to use the 'union' function you wrote for Problem 3-5.
 *)
 let rec vars_of (e : exp) : string list =
-  failwith "vars_of unimplemented"
+  match e with
+    | Var x -> [x]
+    | Const _ -> []
+    | Add (e1, e2) -> union (vars_of e1) (vars_of e2)
+    | Mult (e1, e2) -> union (vars_of e1) (vars_of e2)
+    | Neg e1 -> vars_of e1
 
 (*
   How should we _interpret_ (i.e. give meaning to) an expression?
@@ -902,7 +907,9 @@ let ctxt2 : ctxt = [ ("x", 2L); ("y", 7L) ] (* maps "x" to 2L, "y" to 7L *)
   such value, it should raise the Not_found exception.
 *)
 let rec lookup (x : string) (c : ctxt) : int64 =
-  failwith "unimplemented"
+  match c with
+    | [] -> raise Not_found
+    | (y, v) :: tl -> if x = y then v else lookup x tl
 
 (*
    Problem 4-3
@@ -928,7 +935,12 @@ let rec lookup (x : string) (c : ctxt) : int64 =
 *)
 
 let rec interpret (c : ctxt) (e : exp) : int64 =
-  failwith "unimplemented"
+  match e with
+    | Var x -> lookup x c
+    | Const n -> n
+    | Add (e1, e2) -> Int64.add (interpret c e1) (interpret c e2)
+    | Mult (e1, e2) -> Int64.mul (interpret c e1) (interpret c e2)
+    | Neg e1 -> Int64.neg (interpret c e1)
 
 (*
   Problem 4-4
