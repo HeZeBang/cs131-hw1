@@ -509,7 +509,8 @@ let pair_up (x : 'a) : 'a * 'a = (x, x)
    Complete the definition of third_of_three; be sure to give it
    the correct type signature (we will grade that part manually):
 *)
-let third_of_three _ = failwith "third_of_three unimplemented"
+let third_of_three (t : 'a * 'b * 'c) : 'c =
+  match t with _, _, x -> x
 
 (*
   Problem 2-2
@@ -521,7 +522,7 @@ let third_of_three _ = failwith "third_of_three unimplemented"
 *)
 
 let compose_pair (p : ('b -> 'c) * ('a -> 'b)) : 'a -> 'c =
-  failwith "compose_pair unimplemented"
+  fun x -> fst p (snd p x)
 
 (******************************************************************************)
 (*                                                                            *)
@@ -619,6 +620,7 @@ let is_mylist_empty (l : 'a mylist) : bool =
 let rec sum (l : int list) : int =
   (* note the 'rec' keyword! *)
   match l with [] -> 0 | x :: xs -> x + sum xs
+                      (* ^head ^tail_list => return x + sum(xs) *)
 (* note the recursive call to sum *)
 
 let sum_ans1 : int = sum [ 1; 2; 3 ] (* evaluates to 6 *)
@@ -633,9 +635,9 @@ let sum_ans1 : int = sum [ 1; 2; 3 ] (* evaluates to 6 *)
 *)
 let rec is_sorted (l : 'a list) : bool =
   match l with
-  | [] -> true
-  | [ _ ] -> true
-  | h1 :: h2 :: tl -> h1 < h2 && is_sorted (h2 :: tl)
+  | [] -> true (* nil : true *)
+  | [ _ ] -> true (* single : true *)
+  | h1 :: h2 :: tl -> h1 < h2 && is_sorted (h2 :: tl) (* first < second? false : is_sorted(else) *)
 
 let is_sorted_ans1 : bool = is_sorted [ 1; 2; 3 ] (* true *)
 
@@ -674,7 +676,9 @@ let rec mylist_to_list (l : 'a mylist) : 'a list =
   the inverse of the mylist_to_list function given above.
 *)
 let rec list_to_mylist (l : 'a list) : 'a mylist =
-  failwith "list_to_mylist unimplemented"
+  match l with
+    | [] -> Nil
+    | h :: tl -> Cons (h, list_to_mylist tl)
 
 (*
   Problem 3-2
@@ -690,7 +694,9 @@ let rec list_to_mylist (l : 'a list) : 'a mylist =
   append.  So (List.append [1;2] [3]) is the same as  ([1;2] @ [3]).
 *)
 let rec append (l1 : 'a list) (l2 : 'a list) : 'a list =
-  failwith "append unimplemented"
+  match l1 with
+    | [] -> l2
+    | h :: tl -> h :: append tl l2
 
 (*
   Problem 3-3
@@ -699,7 +705,9 @@ let rec append (l1 : 'a list) (l2 : 'a list) : 'a list =
   you might want to call append.  Do not use the library function.
 *)
 let rec rev (l : 'a list) : 'a list =
-  failwith "rev unimplemented"
+  match l with
+    | [] -> []
+    | h :: tl -> append (rev tl) [h]
 
 (*
   Problem 3-4
@@ -711,7 +719,11 @@ let rec rev (l : 'a list) : 'a list =
   OCaml will compile a tail recursive function to a simple loop.
 *)
 let rev_t (l : 'a list) : 'a list =
-  failwith "rev_t unimplemented"
+  let rec rev_aux (l : 'a list) (acc : 'a list) : 'a list =
+    match l with
+      | [] -> acc
+      | h :: tl -> rev_aux tl (h :: acc)
+  in rev_aux l []
 
 (*
   Problem 3-5
@@ -727,7 +739,10 @@ let rev_t (l : 'a list) : 'a list =
   evaluates to true or false.
 *)
 let rec insert (x : 'a) (l : 'a list) : 'a list =
-  failwith "insert unimplemented"
+  match l with
+    | [] -> [x]
+    | h :: tl -> if x < h then x :: l else 
+      if x == h then l else h :: insert x tl
 
 (*
   Problem 3-6
@@ -737,7 +752,9 @@ let rec insert (x : 'a) (l : 'a list) : 'a list =
   Hint: you might want to use the insert function that you just defined.
 *)
 let rec union (l1 : 'a list) (l2 : 'a list) : 'a list =
-   failwith "union unimplemented"
+  match l1 with
+    | [] -> l2
+    | h :: tl -> union tl (insert h l2)
 
 (******************************************************************************)
 (*                                                                            *)
