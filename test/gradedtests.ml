@@ -169,13 +169,15 @@ let part4_tests : suite = [
   ]);
  
   GradedTest ("Problem5", 5, [
-  
+    ("compile1", assert_eqf (fun () -> compile e1) (compile2 e1));
+    ("compile2", assert_eqf (fun () -> compile e2) (compile2 e2));
+    ("compile3", assert_eqf (fun () -> compile e3) (compile2 e3));
   ]);
 ]
 
 let style_test : suite = [
   GradedTest ("StyleManual", 5, [
-  
+    
   ]);
 ]
 
