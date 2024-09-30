@@ -963,7 +963,9 @@ let rec interpret (c : ctxt) (e : exp) : int64 =
 let rec optimize (e : exp) : exp =
   match e with
   | Var x -> Var x
-  | Const n -> Const n
+  | Const n -> Const n 
+  | Neg e1 -> (
+      match optimize e1 with Const n -> Const (Int64.neg n) | e1' -> Neg e1')
   | Add (e1, e2) -> (
       match (optimize e1, optimize e2) with
       | Const 0L, e -> e
@@ -978,8 +980,6 @@ let rec optimize (e : exp) : exp =
       | e, Const 1L -> e
       | Const n1, Const n2 -> Const (Int64.mul n1 n2)
       | e1', e2' -> Mult (e1', e2'))
-  | Neg e1 -> (
-      match optimize e1 with Const n -> Const (Int64.neg n) | e1' -> Neg e1')
 
 (******************************************************************************)
 (*                                                                            *)
